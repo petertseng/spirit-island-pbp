@@ -1039,6 +1039,13 @@ def change_player_name(request, player_id):
     compute_card_thresholds(player)
     return with_log_trigger(render(request, 'name.html', {'player': player, 'success': True}))
 
+def change_player_color(request, player_id):
+    player = get_object_or_404(GamePlayer, pk=player_id)
+    player.color = request.POST['color']
+    player.save()
+
+    return with_log_trigger(render(request, 'color.html', {'player': player, 'success': True}))
+
 def tab(request, game_id, player_id):
     game = get_object_or_404(Game, pk=game_id)
     player = get_object_or_404(GamePlayer, pk=player_id)
