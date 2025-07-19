@@ -181,6 +181,14 @@ class Game(models.Model):
         player_colors = Counter(self.gameplayer_set.values_list('color', flat=True))
         return [(c, player_colors[c], colors_to_circle_color_map[c]) for c in colors]
 
+    @functools.cached_property
+    def player_count(self):
+        return self.gameplayer_set.count()
+
+    @functools.cached_property
+    def player_summary(self):
+        players = self.gameplayer_set.values_list('id', 'name', 'spirit__name', 'aspect', 'color', named=True)
+        return [p._replace(color=colors_to_circle_color_map[p.color] if p.color else p.color) for p in players]
 
 colors_to_circle_color_map = {
         'blue': '#705dff',

@@ -624,7 +624,11 @@ def view_game(request, game_id, spirit_spec=None):
 
         return redirect(reverse('view_game', args=[game.id, spirit_spec] if spirit_spec else [game.id]))
 
-    tab_id = try_match_spirit(game, spirit_spec) or (game.gameplayer_set.first().id if game.gameplayer_set.exists() else None)
+    # Interestingly, if we query for only('id') instead of only('id', 'game_id'),
+    # Django does another query for ('id', 'game_id'),
+    # even though it should already know both.
+    # Maybe figuring out why it does this would be an interesting exercise sometime.
+    tab_id = try_match_spirit(game, spirit_spec) or (game.gameplayer_set.only('id', 'game_id').first().id if game.player_count else None)
     logs = reversed(game.gamelog_set.order_by('-date').all()[:30])
     return render(request, 'game.html', { 'game': game, 'logs': logs, 'tab_id': tab_id, 'spirit_spec': spirit_spec })
 
