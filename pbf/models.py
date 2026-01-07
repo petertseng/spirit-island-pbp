@@ -322,6 +322,7 @@ class Game(models.Model):
 
     def scenario_setup_from_deck(self):
         scenarios = {
+            'Destiny Unfolds',
         }
         return self.scenario in scenarios
 

@@ -973,6 +973,16 @@ def add_to_scenario(request, player_id, card_id):
 
     return render(request, 'power_deck_setup.html', {'name': card.get_type_display(), 'player': player, 'cards': deck.all()})
 
+def gain_scenario(request, player_id, card_id):
+    player = get_object_or_404(GamePlayer, pk=player_id)
+    card = get_object_or_404(player.scenario, pk=card_id)
+    player.hand.add(card)
+    player.scenario.remove(card)
+
+    add_log_msg(player.game, player=player, text=f'gains {card.name} from their Destiny')
+
+    return with_log_trigger(render(request, 'player.html', {'player': player}))
+
 # Covets Gleaming Shards of Earth
 def create_plant_treasure(request, player_id):
     player = get_object_or_404(GamePlayer, pk=player_id)
