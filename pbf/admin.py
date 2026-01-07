@@ -46,7 +46,7 @@ class GamePlayerAdmin(admin.ModelAdmin):
     filter_horizontal = ('healing', )
     def formfield_for_manytomany(self, db_field, request, **kwargs):
         if db_field.name == 'healing':
-            kwargs['queryset'] = Card.objects.filter(name__in=Card.HEALING_NAMES)
+            kwargs['queryset'] = Card.objects.filter(type=Card.HEALING)
         return super().formfield_for_manytomany(db_field, request, **kwargs)
 
 admin.site.register(Card, CardAdmin)

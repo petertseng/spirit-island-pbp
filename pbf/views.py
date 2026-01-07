@@ -752,14 +752,7 @@ def gain_healing(request, player_id):
         # Otherwise, cards in the previous selection would no longer be accessible.
         return render(request, 'player.html', {'player': player})
 
-    selection = [
-            Card.objects.get(name="Serene Waters"),
-            Card.objects.get(name="Waters Renew"),
-            Card.objects.get(name="Roiling Waters"),
-            Card.objects.get(name="Waters Taste of Ruin")
-            ]
-
-    player.selection.set(selection)
+    player.selection.set(Card.objects.filter(type=Card.HEALING))
 
     return render(request, 'player.html', {'player': player})
 
@@ -859,7 +852,7 @@ def choose_card(request, player_id, card_id):
     player = get_object_or_404(GamePlayer, pk=player_id)
     card = get_object_or_404(player.selection, pk=card_id)
 
-    if card.is_healing():
+    if card.type == Card.HEALING:
         return choose_healing_card(request, player, card)
 
     player.hand.add(card)
@@ -902,7 +895,7 @@ def undo_gain_card(request, player_id):
         elif sel.type == Card.MAJOR:
             majors.append(sel)
             to_remove.append(sel)
-        elif sel.is_healing():
+        elif sel.type == Card.HEALING:
             to_remove.append(sel)
         # If it's not any of these types, we'll leave it in selection, as something's gone wrong.
 
